@@ -5,8 +5,6 @@ import nltk
 from newspaper import Article
 from gtts import gTTS
 import streamlit as st
-import time
-
 
 #funcion para extraer el texto de una url, devuelve el texto extraido
 def extraer_texto_url(url):
@@ -19,57 +17,57 @@ def extraer_texto_url(url):
     article=Article(url)
     article.download()
     article.parse()
-    noticia= article.text
-    
+       
     #dividimos el texto en oraciones con nltk
     oraciones=nltk.sent_tokenize(article.text)
-    text=article.text
-
+    
     #unimos las oraciones en un texto limpio
     texto= " ".join(oraciones)
     return texto
 
 #funcion para convertir el texto en audio y guardarlo en un archivo mp3
 def convertir_audio(texto,idioma):
-    
+
     #convertimos el texto en un archivo mp3 con gtts
     tts=gTTS(texto, lang=idioma)
     st.info("Guardando el archivo mp3 .....espere")
     #guardar el archivo mp3
-    tts.save("noticia.mp3")
+    tts.save("textoAudio.mp3")
     
     #mostramos mensaje de éxito
     st.success("¡Conversión completada!")
-
 
 #definimos las diferentes paginas para navegar
 def page_1():
    
     st.subheader("🗞️ Extraer audio de una noticia")
 
-    
-
     with st.form("Introduce la url"):
+        
         url = st.text_input("URL", value="", key="url_text")
         submit_url=st.form_submit_button("Enviar")
         
         if submit_url:
-            
-            texto= extraer_texto_url(url)
-            convertir_audio(texto,"es")
+            if url!="":
+                url= extraer_texto_url(url)
+                convertir_audio(url,"es")
+            else:
+                st.error("Debe introducir una URL")
 
 def page_2():
     st.subheader("✍️ Escribe un texto para obtener su audio")
 
     with st.form("Introduce un texto"):
+
         texto = st.text_area("Introduce un texto", value="", key="texto_text")
         submit_texto=st.form_submit_button("Enviar")
         
         if submit_texto:
-            
-            #texto= extraer_texto_url(url)
-            convertir_audio(texto,"es")
-
+            if texto!="":
+                #texto= extraer_texto_url(url)
+                convertir_audio(texto,"es")
+            else:
+                st.error("Introduce un texto")
 
 #creamos las categorias en el Sidebar
 pg= st.navigation(
